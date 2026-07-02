@@ -209,6 +209,20 @@
   .ktl-desc{font-size:15px;color:var(--ink-soft);margin:0 0 14px}
   .ktl-tags{display:flex;flex-wrap:wrap;gap:7px}
   .ktl-tag{font-size:11.5px;font-weight:600;color:var(--link);background:rgba(47,110,143,.08);border-radius:999px;padding:5px 11px}
+  .ktl-projects{margin-top:8px}
+  .ktl-project{border-left:3px solid var(--ink);padding:2px 0 2px 16px;margin-bottom:20px;opacity:0;transform:translateX(-8px);transition:opacity .5s ease,transform .5s ease}
+  .ktl-project:last-child{margin-bottom:0}
+  .ktl-item.in .ktl-project{opacity:1;transform:none}
+  .ktl-item.in .ktl-project:nth-child(2){transition-delay:.1s}
+  .ktl-item.in .ktl-project:nth-child(3){transition-delay:.2s}
+  .ktl-item.in .ktl-project:nth-child(4){transition-delay:.3s}
+  .ktl-project-name{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:16px;margin:0 0 5px}
+  .ktl-project-desc{font-size:14.5px;color:var(--ink-soft);margin:0 0 10px;line-height:1.62}
+  .ktl-project .ktl-tags{margin-bottom:2px}
+  .ktl-project .ktl-tag{font-size:11px;padding:4px 10px}
+  .cert-section{margin-top:44px}
+  .cert-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .cert-chip{font-size:13px;font-weight:500;padding:8px 14px;border-radius:999px;background:var(--panel);border:1px solid var(--line-blue);color:var(--ink)}
   @media(max-width:640px){
     .ktl-rail{left:21px}
     .ktl-item{grid-template-columns:44px 1fr;grid-template-areas:"node date" "node card";column-gap:16px}
