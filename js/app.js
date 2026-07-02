@@ -32,9 +32,9 @@ function footer() {
   const admin = isAdmin();
   return '<footer><div class="wrap"><div class="foot-top">'
     + '<div><h3>Let’s talk strategy.</h3><p class="tag">Always happy to swap notes on business, operations, and the occasional surf forecast.</p></div>'
-    + '<div class="foot-contact"><a href="mailto:julianietokeiner@gmail.com">julianietokeiner@gmail.com</a><br><a href="#" target="_blank" rel="noopener">LinkedIn — Julia Nieto Keiner</a><br><span style="color:var(--on-brown-soft)">Kalverstraat, Amsterdam</span></div>'
+    + '<div class="foot-contact"><a href="mailto:julianietokeiner@gmail.com">julianietokeiner@gmail.com</a><br><a href="#" target="_blank" rel="noopener">LinkedIn — Julia Nieto Keiner</a><br><span style="color:var(--ink-mute)">Kalverstraat, Amsterdam</span></div>'
     + '</div><div class="foot-bottom"><span>© ' + new Date().getFullYear() + ' Julia Nieto</span>'
-    + (admin ? '<span style="color:var(--on-brown-soft)">Signed in as admin</span>' : '<button class="foot-admin" data-a="open-login">Admin</button>')
+    + (admin ? '<span style="color:var(--ink-mute)">Signed in as admin</span>' : '<button class="foot-admin" data-a="open-login">Admin</button>')
     + '</div></div></footer>';
 }
 
