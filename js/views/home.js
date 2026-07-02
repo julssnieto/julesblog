@@ -52,7 +52,7 @@ export async function renderHome({ posts, cats, isAdmin, filter, introAnim }) {
     }
     html += '<div class="blog-head"><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><h2>All posts</h2><button class="btn-write-inline" data-a="write-new">Write a post</button>' + (isAdmin ? '<button class="btn-cat" data-a="open-cats">Categories</button>' : '') + '</div>' + filtersHTML(cats, filter) + '</div>';
     html += '<div class="grid">' + rest.map(p => cardHTML(p, isAdmin)).join('') + '</div>';
-    if (rest.length === 0 && filter !== 'all') { html += '<p style="text-align:center;color:#AEB9BC;font-style:italic;padding:36px 0">Nothing in this category yet.</p>'; }
+    if (rest.length === 0 && filter !== 'all') { html += '<p style="text-align:center;color:var(--ink-mute);font-style:italic;padding:36px 0">Nothing in this category yet.</p>'; }
   }
   html += '</div></section>';
   return html;
