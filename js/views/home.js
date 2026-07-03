@@ -48,7 +48,6 @@ function cardHTML(p, isAdmin) {
     + (!p.published ? '<span class="status-chip draft">Draft</span>' : '')
     + '</div>'
     + '<h3>' + esc(p.title) + '</h3>'
-    + '<p>' + esc(p.excerpt) + '</p>'
     + '<div class="foot"><span class="meta">' + fmtShort(p.date) + '</span><span class="meta">' + readTime(p.body_html) + '</span></div>'
     + (isAdmin ? '<div class="admin-row"><button class="btn-edit" data-a="edit" data-id="' + esc(p.id) + '">Edit</button><button class="btn-del" data-a="del" data-id="' + esc(p.id) + '">Delete</button></div>' : '')
     + '</article>';
