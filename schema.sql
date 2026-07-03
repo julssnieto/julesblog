@@ -35,6 +35,7 @@ create table public.posts (
   body_html   text not null default '',
   featured    boolean not null default false,
   published   boolean not null default true,
+  sources     jsonb not null default '[]'::jsonb,
   author_id   uuid references auth.users(id) default auth.uid(),
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()

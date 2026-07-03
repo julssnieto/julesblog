@@ -24,7 +24,10 @@ function filtersHTML(cats, filter) {
 
 function cardHTML(p, isAdmin) {
   return '<article class="card" data-a="open" data-id="' + esc(p.slug) + '">'
-    + '<span class="cat">' + esc(p.category) + '</span>'
+    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:15px">'
+    + '<span class="cat" style="margin-bottom:0">' + esc(p.category) + '</span>'
+    + (!p.published ? '<span class="status-chip draft">Draft</span>' : '')
+    + '</div>'
     + '<h3>' + esc(p.title) + '</h3>'
     + '<p>' + esc(p.excerpt) + '</p>'
     + '<div class="foot"><span class="meta">' + fmtShort(p.date) + '</span><span class="meta">' + readTime(p.body_html) + '</span></div>'
@@ -41,7 +44,8 @@ export async function renderHome({ posts, cats, isAdmin, filter, introAnim }) {
       + '</div>';
   } else {
     const sorted = posts.slice().sort((a, b) => (b.date < a.date ? -1 : 1));
-    const featured = (filter === 'all') ? (sorted.find(p => p.featured) || sorted[0]) : null;
+    const publishedOnly = sorted.filter(p => p.published);
+    const featured = (filter === 'all') ? (publishedOnly.find(p => p.featured) || publishedOnly[0]) : null;
     const match = p => filter === 'all' || p.category === filter;
     const rest = sorted.filter(p => !featured || p.id !== featured.id).filter(match);
     if (featured) {

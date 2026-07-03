@@ -5,7 +5,7 @@ import { setupEditor } from './editor.js';
 import { updateTimeline, bindTimelineScroll } from './timeline.js';
 import { renderHome } from './views/home.js';
 import { renderPost } from './views/post.js';
-import { renderWrite } from './views/write.js';
+import { renderWrite, setupSourcesEditor, collectSources } from './views/write.js';
 import { renderAbout } from './views/about.js';
 
 const state = { route: { view: 'home' }, filter: 'all', showLogin: false, loginErr: '', pendingRoute: null, showCats: false, catErr: '' };
@@ -89,7 +89,7 @@ async function render() {
   let main = '';
 
   if (route.view === 'home') {
-    const posts = await api.getPosts();
+    const posts = await api.getPosts({ includeUnpublished: isAdmin() });
     if (myToken !== renderToken) return;
     const introAnim = !introDone && !prefersReduced();
     introDone = true;
@@ -112,7 +112,7 @@ async function render() {
   document.getElementById('app').innerHTML = nav() + '<main>' + main + '</main>' + footer();
   document.getElementById('modal').innerHTML = modalHTML();
   setupReveal();
-  if (route.view === 'write') setupEditor();
+  if (route.view === 'write') { setupEditor(); setupSourcesEditor(); }
   if (route.view === 'about') { bindTimelineScroll(); if (window.requestAnimationFrame) requestAnimationFrame(updateTimeline); }
   const em = document.getElementById('m-email'); if (em) em.focus();
   const nc = document.getElementById('new-cat'); if (nc) nc.focus();
@@ -121,22 +121,23 @@ async function render() {
 /* ---------------------------------------------------------------------
  * Actions
  * ------------------------------------------------------------------- */
-async function savePost() {
+async function savePost(published) {
   const t = (document.getElementById('f-title') || {}).value || '';
   const catSel = document.getElementById('f-cat');
   const catId = catSel ? catSel.value : '';
   const catName = catSel && catSel.selectedOptions[0] ? catSel.selectedOptions[0].getAttribute('data-name') : '';
   const ed = document.getElementById('editor');
   const body = ed ? ed.innerHTML : '';
-  if (!t.trim() || !stripHTML(body)) { alert('Please add a title and some body text before publishing.'); return; }
+  const sources = collectSources();
+  if (!t.trim() || !stripHTML(body)) { alert('Please add a title and some body text before saving.'); return; }
 
   const editingId = state.route.id;
   try {
     let saved;
     if (editingId) {
-      saved = await api.updatePost(editingId, { title: t.trim(), categoryId: catId, categoryName: catName, bodyHtml: body, excerpt: makeExcerpt(body) });
+      saved = await api.updatePost(editingId, { title: t.trim(), categoryId: catId, categoryName: catName, bodyHtml: body, excerpt: makeExcerpt(body), published, sources });
     } else {
-      saved = await api.createPost({ title: t.trim(), categoryId: catId, categoryName: catName, bodyHtml: body, excerpt: makeExcerpt(body), featured: false });
+      saved = await api.createPost({ title: t.trim(), categoryId: catId, categoryName: catName, bodyHtml: body, excerpt: makeExcerpt(body), featured: false, published, sources });
     }
     navigate('post', saved.slug);
   } catch (e) {
@@ -228,7 +229,8 @@ document.addEventListener('click', (e) => {
     e.preventDefault();
     navigate('write', id);
   } else if (a === 'del') { e.preventDefault(); delPost(id); }
-  else if (a === 'save') savePost();
+  else if (a === 'save-publish') savePost(true);
+  else if (a === 'save-draft') savePost(false);
   else if (a === 'cancel') {
     if (currentEditingPost) navigate('post', currentEditingPost.slug); else navigate('home');
   } else if (a === 'open-login') { state.showLogin = true; state.loginErr = ''; render(); }

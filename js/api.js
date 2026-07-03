@@ -1,5 +1,5 @@
 import { supabase, isConfigured } from './supabaseClient.js';
-import { sanitizeHtml } from './sanitize.js';
+import { sanitizeHtml, sanitizeSources } from './sanitize.js';
 
 /* ---------------------------------------------------------------------
  * Dev-mode mock backend.
@@ -16,13 +16,20 @@ let mockPosts = [
     id: 'p1', slug: 'welcome-to-the-blog', title: 'Welcome to the blog',
     category: 'Strategy', excerpt: 'A short note on why this exists and what to expect.',
     body_html: '<p>This is a sample post shown in dev mode. Once Supabase is connected, real posts will appear here instead.</p>',
-    featured: true, published: true, date: new Date().toISOString().slice(0, 10)
+    featured: true, published: true, sources: [],
+    date: new Date().toISOString().slice(0, 10)
   },
   {
     id: 'p2', slug: 'a-note-on-prioritisation', title: 'A note on prioritisation',
     category: 'Operations', excerpt: 'Second sample post, so the grid and filters have something to show.',
-    body_html: '<p>Second sample post body.</p>', featured: false, published: true,
+    body_html: '<p>Second sample post body.</p>', featured: false, published: true, sources: [],
     date: new Date(Date.now() - 86400000 * 5).toISOString().slice(0, 10)
+  },
+  {
+    id: 'p3', slug: 'draft-example', title: 'A draft in progress',
+    category: 'Strategy', excerpt: 'Sample draft so the draft badge can be checked in dev mode.',
+    body_html: '<p>Still being written.</p>', featured: false, published: false, sources: [],
+    date: new Date().toISOString().slice(0, 10)
   }
 ];
 let mockSession = null;
@@ -112,6 +119,7 @@ function mapRow(row) {
     body_html: row.body_html,
     featured: row.featured,
     published: row.published,
+    sources: row.sources || [],
     date: (row.created_at || row.date || '').slice(0, 10)
   };
 }
@@ -152,12 +160,13 @@ export async function getPostById(id) {
   return data ? mapRow(data) : null;
 }
 
-export async function createPost({ title, categoryId, categoryName, bodyHtml, excerpt, featured }) {
+export async function createPost({ title, categoryId, categoryName, bodyHtml, excerpt, featured, published, sources }) {
   const clean = sanitizeHtml(bodyHtml);
+  const cleanSources = sanitizeSources(sources);
   if (!isConfigured) {
     const post = {
       id: 'p-' + Date.now(), slug: slugify(title), title, category: categoryName,
-      excerpt, body_html: clean, featured: !!featured, published: true,
+      excerpt, body_html: clean, featured: !!featured, published: !!published, sources: cleanSources,
       date: new Date().toISOString().slice(0, 10)
     };
     mockPosts.push(post);
@@ -167,7 +176,7 @@ export async function createPost({ title, categoryId, categoryName, bodyHtml, ex
     .from('posts')
     .insert({
       slug: slugify(title), title, category_id: categoryId,
-      excerpt, body_html: clean, featured: !!featured, published: true
+      excerpt, body_html: clean, featured: !!featured, published: !!published, sources: cleanSources
     })
     .select('*, categories(name)')
     .single();
@@ -175,16 +184,17 @@ export async function createPost({ title, categoryId, categoryName, bodyHtml, ex
   return mapRow(data);
 }
 
-export async function updatePost(id, { title, categoryId, categoryName, bodyHtml, excerpt, featured }) {
+export async function updatePost(id, { title, categoryId, categoryName, bodyHtml, excerpt, featured, published, sources }) {
   const clean = sanitizeHtml(bodyHtml);
+  const cleanSources = sanitizeSources(sources);
   if (!isConfigured) {
     const p = mockPosts.find(x => x.id === id);
-    if (p) Object.assign(p, { title, category: categoryName, body_html: clean, excerpt, featured: !!featured });
+    if (p) Object.assign(p, { title, category: categoryName, body_html: clean, excerpt, featured: !!featured, published: !!published, sources: cleanSources });
     return p;
   }
   const { data, error } = await supabase
     .from('posts')
-    .update({ title, category_id: categoryId, excerpt, body_html: clean, featured: !!featured })
+    .update({ title, category_id: categoryId, excerpt, body_html: clean, featured: !!featured, published: !!published, sources: cleanSources })
     .eq('id', id)
     .select('*, categories(name)')
     .single();

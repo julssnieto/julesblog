@@ -20,3 +20,25 @@ const CONFIG = {
 export function sanitizeHtml(html) {
   return DOMPurify.sanitize(html || '', CONFIG);
 }
+
+// Sources are plain admin-typed text/URLs, not HTML from the rich-text
+// editor, so DOMPurify doesn't apply — validate the URL scheme directly
+// instead, since these get rendered as real <a href> links later.
+export function sanitizeUrl(raw) {
+  let url = (raw || '').trim();
+  if (!url) return null;
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  try {
+    const u = new URL(url);
+    if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
+    return u.href;
+  } catch (e) {
+    return null;
+  }
+}
+
+export function sanitizeSources(sources) {
+  return (sources || [])
+    .map(s => ({ title: (s.title || '').trim().slice(0, 140), url: sanitizeUrl(s.url) }))
+    .filter(s => s.url);
+}
