@@ -12,7 +12,7 @@ export const EXPERIENCE = [
     year: '2025', dateRange: 'Apr 2025 – Jun 2026', mono: 'PwC',
     org: 'PwC Netherlands', loc: 'Amsterdam', now: true,
     role: 'TOM & Transformation — Senior Consultant',
-    intro: 'I specialize in Target Operating Model (TOM) design — shaping new processes, governance, and ways of working for any kind of organizational transformation. My work runs across the full picture: redesigning end-to-end processes and decision-making structures, defining accountability and governance, and standing up the program and portfolio management capabilities that keep large-scale change on track.',
+    intro: 'I specialize in Target Operating Model (TOM) design, shaping new processes, governance, and ways of working for any kind of organizational transformation. My work runs across the full picture: redesigning end-to-end processes and decision-making structures, defining accountability and governance, and standing up the program and portfolio management capabilities that keep large-scale change on track.',
     projects: [
       {
         name: 'Financial services organization',
