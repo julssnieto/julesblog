@@ -49,6 +49,11 @@ The anon key is meant to be public — it's safe to commit to a public GitHub re
 2. Publish a test post.
 3. Open the same URL in an incognito/private window (or ask someone else to check). You should see the post **without** being signed in, and you should **not** see any Write/Edit/Delete buttons anywhere as a signed-out visitor.
 
+## Writing posts
+
+- **Drafts**: the write view has two save buttons — "Save as draft" keeps a post hidden from everyone but you (signed in), "Publish" makes it public. Drafts show a small "Draft" badge only you can see, and are never picked as the featured post.
+- **Sources**: below the editor, add any number of title + URL rows for further reading — they render as a linked list at the bottom of the published post.
+
 ## A quirk to know about
 
 Supabase's free tier pauses a project after **7 days with no activity**. If the site ever shows an error loading posts after a quiet stretch, open the Supabase dashboard — there will be a one-click **Restore** button. No data is lost, it's just paused.
