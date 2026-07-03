@@ -1,11 +1,5 @@
 import { esc, fmtShort, readTime, prefersReduced } from '../utils.js';
 
-function tagPart(text, cls, delay, anim) {
-  return anim
-    ? '<span class="tag-part ' + cls + ' pop" style="animation-delay:' + delay + 's">' + text + '</span>'
-    : '<span class="tag-part ' + cls + '">' + text + '</span>';
-}
-
 function hero(anim) {
   const wrapCls = 'jn-portrait-wrap' + (anim ? ' intro' : '');
   function a(base, d) { return anim ? 'class="' + base + ' slide" style="animation-delay:' + d + 's"' : 'class="' + base + '"'; }
@@ -15,7 +9,7 @@ function hero(anim) {
     + '<h1 ' + a('jn-h1', 1.37) + '>Hi — welcome to <em>Jules’ blog.</em></h1>'
     + '<p ' + a('jn-lead', 1.5) + '>This is where I share what I’m reading, learning, and slowly figuring out about business and strategy.</p>'
     + '<p ' + a('jn-sub', 1.62) + '>A spot to gather the insights from the podcasts, articles, and books I’m learning from.</p>'
-    + '<p class="jn-tag">' + tagPart('Part journal,', 'c1', 1.9, anim) + ' ' + tagPart('part playground,', 'c2', 2.05, anim) + ' ' + tagPart('part accountability partner.', 'c3', 2.2, anim) + '</p>'
+    + '<p class="jn-tag' + (anim ? ' jn-tag-sweep' : '') + '"' + (anim ? ' style="animation-delay:1.9s"' : '') + '>Part journal, part playground, part accountability partner.</p>'
     + '<div class="scrollcue">Read the blog<span class="chev"></span></div>'
     + '</section>';
 }
