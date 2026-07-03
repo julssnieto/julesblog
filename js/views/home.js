@@ -1,5 +1,24 @@
 import { esc, fmtShort, readTime, prefersReduced } from '../utils.js';
 
+// Soft, faded multicolor blob patterns (blue/gold/warm-neutral only, no
+// green) used behind the featured post in place of a real cover photo.
+// Deterministically picked per category so the same category always gets
+// the same look, without needing any image upload.
+const ART_THEMES = [
+  'radial-gradient(circle at 18% 22%, #CDE4F0 0%, transparent 55%), radial-gradient(circle at 82% 18%, #F6D262 0%, transparent 52%), radial-gradient(circle at 55% 88%, #0B4A6F 0%, transparent 62%), linear-gradient(rgba(255,255,255,.32),rgba(255,255,255,.32))',
+  'radial-gradient(circle at 20% 80%, #6FA6C4 0%, transparent 55%), radial-gradient(circle at 80% 75%, #EAB308 0%, transparent 50%), radial-gradient(circle at 50% 15%, #DCEAF1 0%, transparent 60%), linear-gradient(rgba(255,255,255,.3),rgba(255,255,255,.3))',
+  'radial-gradient(circle at 25% 30%, #E0A800 0%, transparent 50%), radial-gradient(circle at 78% 65%, #8FC1DE 0%, transparent 55%), radial-gradient(circle at 55% 95%, #3A2A1E 0%, transparent 68%), linear-gradient(rgba(255,255,255,.38),rgba(255,255,255,.38))',
+  'radial-gradient(circle at 15% 70%, #0B4A6F 0%, transparent 58%), radial-gradient(circle at 85% 25%, #F6EEDD 0%, transparent 50%), radial-gradient(circle at 50% 10%, #CF9B00 0%, transparent 55%), linear-gradient(rgba(255,255,255,.3),rgba(255,255,255,.3))',
+  'radial-gradient(circle at 20% 20%, #CDE4F0 0%, transparent 52%), radial-gradient(circle at 80% 80%, #EDE0C8 0%, transparent 55%), radial-gradient(circle at 50% 50%, #6FA6C4 0%, transparent 60%), linear-gradient(rgba(255,255,255,.28),rgba(255,255,255,.28))'
+];
+
+function artTheme(category) {
+  let h = 0;
+  const s = category || '';
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return ART_THEMES[h % ART_THEMES.length];
+}
+
 function hero(anim) {
   const wrapCls = 'jn-portrait-wrap' + (anim ? ' intro' : '');
   function a(base, d) { return anim ? 'class="' + base + ' slide" style="animation-delay:' + d + 's"' : 'class="' + base + '"'; }
@@ -50,7 +69,7 @@ export async function renderHome({ posts, cats, isAdmin, filter, introAnim }) {
     const rest = sorted.filter(p => !featured || p.id !== featured.id).filter(match);
     if (featured) {
       html += '<article class="featured fade" data-a="open" data-id="' + esc(featured.slug) + '">'
-        + '<div class="art"><svg viewBox="0 0 600 400" preserveAspectRatio="none"><path d="M0,250 C150,180 300,320 450,240 C540,190 600,250 600,250 L600,400 L0,400 Z" fill="rgba(58,42,30,.10)"/><path d="M0,292 C150,232 320,350 470,280 C560,238 600,292 600,292 L600,400 L0,400 Z" fill="rgba(58,42,30,.06)"/></svg><span class="tag">Featured</span></div>'
+        + '<div class="art" style="background-image:' + artTheme(featured.category) + '"><span class="tag">Featured</span></div>'
         + '<div class="body"><span class="cat">' + esc(featured.category) + '</span><h3>' + esc(featured.title) + '</h3><p>' + esc(featured.excerpt) + '</p>'
         + '<div class="readrow"><span class="readlink">Read the post →</span><span class="meta">' + readTime(featured.body_html) + '</span></div></div></article>';
     }
