@@ -261,8 +261,14 @@ async function boot() {
   let firstAuthEvent = true;
   api.onAuthChange((s) => {
     if (firstAuthEvent) { firstAuthEvent = false; session = s; return; }
+    // Supabase refreshes the session token whenever the tab regains focus,
+    // firing another auth event even though sign-in status hasn't actually
+    // changed. Re-rendering on every one of those would wipe out anything
+    // unsaved in the write view just from switching tabs and back — only
+    // re-render when the admin/signed-out status actually flips.
+    const wasAdmin = isAdmin();
     session = s;
-    render();
+    if (wasAdmin !== isAdmin()) render();
   });
   cats = await api.getCategories();
   onRouteChange((route) => { state.route = route; render(); top(); });
